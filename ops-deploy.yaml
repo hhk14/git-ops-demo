@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git-ops-deploy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: git-ops-demo
+      env: dev
+      project: sample-project
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        name: git-ops-demo
+        env: dev
+        project: sample-project
+    spec:
+      containers:
+        - name: git-ops-demo
+          image: nginx:1.24.0-alpine
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /
+            initialDelaySeconds: 5
+            failureThreshold: 1
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /
+            initialDelaySeconds: 5
+            failureThreshold: 2
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+          startupProbe:
+            httpGet:
+              port: 80
+              path: /
+            initialDelaySeconds: 5
+            failureThreshold: 10
+            periodSeconds: 3
+            timeoutSeconds: 3
+
+
+
