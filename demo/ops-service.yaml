@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: git-ops-svc
+  namespace: default
 spec:
   selector:
     name: git-ops-demo
